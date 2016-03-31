@@ -3,6 +3,7 @@
 class Sudoku {
 	public:
 		int ans[9][9];
+		int rot[9][9];
 		int ass;
 		int i,j,k;
 		Sudoku();
@@ -16,5 +17,9 @@ class Sudoku {
 		void rotate(int n);
 		void flip(int n);
 		void transform();
-		
+	private:
+		void DFS(int i,int j);
+		bool NineTest(int i,int j,int k);
+		bool NineTest2(int si,int ei,int sj,int ej,int k);
+		bool RowColTest(int i,int j,int k);
 };
