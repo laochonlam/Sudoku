@@ -4,8 +4,9 @@ class Sudoku {
 	public:
 		int ans[9][9];
 		int rot[9][9];
+		int print[9][9];
 		int ass;
-		int i,j,k;
+		int i,j;
 		Sudoku();
 		void giveQuestion();
 		void readIn();
@@ -18,8 +19,9 @@ class Sudoku {
 		void flip(int n);
 		void transform();
 	private:
+		int soluation;
 		void DFS(int i,int j);
-		bool NineTest(int i,int j,int k);
-		bool NineTest2(int si,int ei,int sj,int ej,int k);
+		bool NineTest(int i,int j,int k,int aa);
+		bool NineTest2(int si,int ei,int sj,int ej,int k,int aa);
 		bool RowColTest(int i,int j,int k);
 };

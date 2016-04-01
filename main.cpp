@@ -6,8 +6,6 @@ using namespace std;
 int main(){
 	Sudoku Sudoku;
 
-	Sudoku.readIn();
-	Sudoku.solve();
-
+	Sudoku.giveQuestion();
 	
 }

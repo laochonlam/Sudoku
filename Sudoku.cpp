@@ -2,12 +2,49 @@
 #include <cstdio>
 #include <iostream>
 #include <cstdlib>
+using namespace std;
 
 Sudoku::Sudoku(){
-	
+	soluation = 0;	
 }
 
-void Sudoku::giveQuestion(){
+void Sudoku::giveQuestion(){ 
+	int c[9][9] = {{5,3,4,6,7,8,9,1,2},
+				   {6,7,2,1,9,5,3,4,8},
+				   {1,9,8,3,4,2,5,6,7},
+				   {8,5,9,7,6,1,4,2,3},
+				   {4,2,6,8,5,3,7,9,1},
+				   {7,1,3,9,2,4,8,5,6},
+				   {9,6,1,5,3,7,2,8,4},
+				   {2,8,7,4,1,9,6,3,5},
+				   {3,4,5,2,8,6,1,7,9}};
+
+	for (i=0;i<9;i++)
+		for (j=0;j<9;j++)
+			ans[i][j] = c[i][j];
+
+	srand(time(NULL));
+	changeNum(rand()%9+1,rand()%9+1);
+	changeRow(rand()%3,rand()%3);
+	changeCol(rand()%3,rand()%3);
+	rotate(rand()%101);
+	flip(rand()%2);
+
+	
+
+	for (i=0;i<0;i++)
+		for (j=0;j<9;j++)
+			c[i][j] = ans[i][j];
+		
+	for (i=0;i<50;i++)
+		ans[rand()%9][rand()%9] = 0;
+
+	for (i=0;i<9;i++)
+	{
+		for (j=0;j<9;j++)
+			printf("%d ",ans[i][j]);
+		printf("\n");
+	}
 }
 
 
@@ -18,46 +55,47 @@ void Sudoku::readIn(){
 }
 
 void Sudoku::printAns(){
-	printf("\n");
+	cout<<endl;
 	for (i=0;i<9;i++)
 	{
-		printf("\n");
+
 		for (j=0;j<9;j++)
-			printf("%d ",ans[i][j]);
+			printf("%d ",print[i][j]);
+		printf("\n");
 	}
 }
 
-////////////////////////////////////////////////////////
 
 
-bool Sudoku::NineTest(int i,int j,int k){
+bool Sudoku::NineTest(int i,int j,int k,int aa){
 	if ( i>=0 && i<=2 && j>=0 && j<=2)
-		return NineTest2(0,2,0,2,k);
+		return NineTest2(0,2,0,2,k,aa);
 	if ( i>=0 && i<=2 && j>=3 && j<=5)
-		return NineTest2(0,2,3,5,k);
+		return NineTest2(0,2,3,5,k,aa);
 	if ( i>=0 && i<=2 && j>=6 && j<=8)
-		return NineTest2(0,2,6,8,k);
+		return NineTest2(0,2,6,8,k,aa);
 	if ( i>=3 && i<=5 && j>=0 && j<=2)
-		return NineTest2(3,5,0,2,k);
+		return NineTest2(3,5,0,2,k,aa);
 	if ( i>=3 && i<=5 && j>=3 && j<=5)
-		return NineTest2(3,5,3,5,k);
+		return NineTest2(3,5,3,5,k,aa);
 	if ( i>=3 && i<=5 && j>=6 && j<=8)
-		return NineTest2(3,5,6,8,k);
+		return NineTest2(3,5,6,8,k,aa);
 	if ( i>=6 && i<=8 && j>=0 && j<=2)
-		return NineTest2(6,8,0,2,k);
+		return NineTest2(6,8,0,2,k,aa);
 	if ( i>=6 && i<=8 && j>=3 && j<=5)
-		return NineTest2(6,8,3,5,k);
+		return NineTest2(6,8,3,5,k,aa);
 	if ( i>=6 && i<=8 && j>=6 && j<=8)
-		return NineTest2(6,8,6,8,k);
+		return NineTest2(6,8,6,8,k,aa);
 
 }
 
-bool Sudoku::NineTest2(int si,int ei,int sj,int ej,int k){
+bool Sudoku::NineTest2(int si,int ei,int sj,int ej,int k,int aa){
 	for (int i = si;i<=ei;i++)
 		for (int j = sj;j<=ej;j++)
 		{
-			if (ans[i][j] == k)
-				return false;
+
+			if (ans[i][j] == k) aa++;
+			if (aa>=2) return false;
 		}
 	return true;
 }
@@ -65,8 +103,10 @@ bool Sudoku::NineTest2(int si,int ei,int sj,int ej,int k){
 bool Sudoku::RowColTest(int i,int j,int k){
 	for (int test = 0; test <9 ;test++)
 	{
-		if (ans[test][j] == k) return false;
-		if (ans[i][test] == k) return false;
+		if ( test != i)
+			if (ans[test][j] == k) return false;
+		if ( test != j)
+			if (ans[i][test] == k) return false;
 	}
 	return true;
 }
@@ -77,41 +117,121 @@ bool Sudoku::RowColTest(int i,int j,int k){
 
 void Sudoku::DFS(int i,int j){
 	bool poss = true;
-	for (k=1;k<=9;k++)
+	bool flag = false;
+	int row,col;
+	int p;
+	int yo,ya;
+	for (int k=1;k<=9;k++)
 	{
-			poss = NineTest(i,j,k);
+		//	if (soluation > 1) return;
+			poss = true; flag = false;
+			poss = NineTest(i,j,k,1);
 			if (poss == true) poss = RowColTest(i,j,k);
 			if (poss == true) 
 			{
 				ans[i][j] = k;
-				printAns();
+	//			printAns();
+				row = i; col = j+1;
+				if ( col == 9) { col = 0; row++;}
+				while (flag == false)
+				{
+					if ( ans[row][col] == 0)
+					{  DFS(row,col); flag = true; };
+					col++;
+					
+					if (col == 9) {col = 0;row++;}
+					if (col == 0 && row == 9) 
+					{
+						{
+								soluation ++;
+					   	 	for (int x=0;x<9;x++)
+								for (int y=0;y<9;y++)
+									print[x][y] = ans[x][y];	
+						}
+					}
+					if 	(col ==0 && row== 9) break;
+				}
 			}
 	}
+	ans[i][j] = 0;
 }
 
-
-
-
-
-
 void Sudoku::solve(){
+	bool tester;
+	int doo = 0;
+	for (i=0;i<9;i++)
+		for (j=0;j<9;j++)
+		{
+			if (ans[i][j] != 0)
+			{
+				tester = true;
+				tester = RowColTest(i,j,ans[i][j]);
+				if (tester == true)
+				tester = NineTest(i,j,ans[i][j],0);
+				if (tester == false){ soluation = 0; doo  = 1; }
+			}
+		}
+	
+	if (doo == 0)
+	{
 	i=0; j=0;
-	while (1)
+	int help = 0; int pascal,python;
+	while ( i<9 )
 	{
 		if ( ans[i][j] == 0)
 		{
 			DFS(i,j);
 			break;
-		}
+		} else { help++; }
 		j++;
 		if ( j == 9) { i++; j=0; }
 	}
 
+	if (soluation == 1)
+	{
+	bool kyle = true;
+	int lam,two;
 
-	printAns();
+	if (print[8][8] == 0)
+		for (lam=1;lam<=9;lam++)
+		{
+			kyle = true;
+			print[8][8] = lam;
+			for (two = 0;two<8;two++)
+			{
+				if (print[8][two] == lam || print[two][8] == lam)
+				{ 
+					kyle = false; 
+				}
+			}
+			for (pascal = 6;pascal<=8;pascal ++)
+				for (python = 6;python<=8;python++)
+					if (print[pascal][python] == lam && pascal!=8 && python!=8)
+							kyle = false;
+
+			if (kyle == true) {print[8][8] = lam; break;}
+		}
+	}
+
+	if (help == 81)
+	{
+		for (pascal=0;pascal<9;pascal++)
+			for (python=0;python<9;python++)
+				print[pascal][python] = ans[pascal][python];
+		soluation++;
+	}
+
+	}
+	if (soluation > 1 )
+		cout<<"2";
+	if (soluation == 1)
+	{
+		cout<<"1";
+		printAns();
+	}
+	if (soluation == 0)
+		cout<<"0";
 }
-
-//////////////////////////////////////////////////////////
 
 void Sudoku::changeNum(int a,int b){
 	for (i=0;i<9;i++)
@@ -155,7 +275,7 @@ void Sudoku::changeCol(int a,int b){
 void Sudoku::rotate(int n){
 	n = n % 4;
 	int row,col;
-	for (k=0;k<n;k++)
+	for (int count=0;count<n;count++)
 	{
 		row = 0;col = 0;
 		for (i=0;i<9;i++)
@@ -200,9 +320,15 @@ void Sudoku::flip(int n){
 
 void Sudoku::transform(){
 	srand(time(NULL));
-	changeNum(rand()%9,rand()%9);
+	changeNum(rand()%9+1,rand()%9+1);
 	changeRow(rand()%3,rand()%3);
 	changeCol(rand()%3,rand()%3);
 	rotate(rand()%101);
-	flip(rand()%2);	
+	flip(rand()%2);
+	for (i=0;i<9;i++)
+	{
+		for (j=0;j<9;j++)
+			printf("%d ",ans[i][j]);
+		printf("\n");
+	}				
 }
