@@ -171,7 +171,7 @@ void Sudoku::solve(){
 				if (tester == false){ soluation = 0; doo  = 1; }
 			}
 		}
-	
+
 	if (doo == 0)
 	{
 	i=0; j=0;
