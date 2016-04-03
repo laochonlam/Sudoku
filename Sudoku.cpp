@@ -8,6 +8,13 @@ Sudoku::Sudoku(){
 	soluation = 0;	
 }
 
+int Sudoku::Counter(int i ){
+	int last = 0;
+	for (int eden = 0;eden<9;eden++)
+		last = last + print[eden][8];
+	return (45 - last);
+}
+
 void Sudoku::giveQuestion(){ 
 	int c[9][9] = {{5,3,4,6,7,8,9,1,2},
 				   {6,7,2,1,9,5,3,4,8},
@@ -120,17 +127,18 @@ void Sudoku::DFS(int i,int j){
 	bool flag = false;
 	int row,col;
 	int p;
-	int yo,ya;
+	int yo,ya; 
+	int correct = 0;
 	for (int k=1;k<=9;k++)
 	{
-		//	if (soluation > 1) return;
+			if (soluation > 1) return;
 			poss = true; flag = false;
 			poss = NineTest(i,j,k,1);
 			if (poss == true) poss = RowColTest(i,j,k);
 			if (poss == true) 
 			{
 				ans[i][j] = k;
-	//			printAns();
+
 				row = i; col = j+1;
 				if ( col == 9) { col = 0; row++;}
 				while (flag == false)
@@ -138,7 +146,7 @@ void Sudoku::DFS(int i,int j){
 					if ( ans[row][col] == 0)
 					{  DFS(row,col); flag = true; };
 					col++;
-					
+						
 					if (col == 9) {col = 0;row++;}
 					if (col == 0 && row == 9) 
 					{
@@ -147,9 +155,11 @@ void Sudoku::DFS(int i,int j){
 					   	 	for (int x=0;x<9;x++)
 								for (int y=0;y<9;y++)
 									print[x][y] = ans[x][y];	
+
 						}
 					}
-					if 	(col ==0 && row== 9) break;
+					
+					
 				}
 			}
 	}
@@ -168,7 +178,8 @@ void Sudoku::solve(){
 				tester = RowColTest(i,j,ans[i][j]);
 				if (tester == true)
 				tester = NineTest(i,j,ans[i][j],0);
-				if (tester == false){ soluation = 0; doo  = 1; }
+				else { doo = 1; break;}
+				if (tester == false){ soluation = 0; doo  = 1; break;}
 			}
 		}
 
@@ -188,31 +199,9 @@ void Sudoku::solve(){
 	}
 
 	if (soluation == 1)
-	{
-	bool kyle = true;
-	int lam,two;
-
-	if (print[8][8] == 0)
-		for (lam=1;lam<=9;lam++)
-		{
-			kyle = true;
-			print[8][8] = lam;
-			for (two = 0;two<8;two++)
-			{
-				if (print[8][two] == lam || print[two][8] == lam)
-				{ 
-					kyle = false; 
-				}
-			}
-			for (pascal = 6;pascal<=8;pascal ++)
-				for (python = 6;python<=8;python++)
-					if (print[pascal][python] == lam && pascal!=8 && python!=8)
-							kyle = false;
-
-			if (kyle == true) {print[8][8] = lam; break;}
-		}
-	}
-
+		if (print[8][8] == 0)
+			print [8][8] = Counter(8);
+	
 	if (help == 81)
 	{
 		for (pascal=0;pascal<9;pascal++)

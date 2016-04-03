@@ -24,4 +24,5 @@ class Sudoku {
 		bool NineTest(int i,int j,int k,int aa);
 		bool NineTest2(int si,int ei,int sj,int ej,int k,int aa);
 		bool RowColTest(int i,int j,int k);
+		int Counter(int i);
 };
