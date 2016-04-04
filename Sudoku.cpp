@@ -169,9 +169,20 @@ void Sudoku::DFS(int i,int j){
 void Sudoku::solve(){
 	bool tester;
 	int doo = 0;
+    int rowcounter = 0,colcounter = 0;
+    int rowrecord = 0,colrecord = 0;
+    int rowzero = 0,colzero = 0;
 	for (i=0;i<9;i++)
+    {
+        rowcounter=0;colcounter=0;
+        rowrecord =0;colrecord =0;
+        rowzero = 0;colzero = 0;
 		for (j=0;j<9;j++)
 		{
+            if (ans[i][j] == 0) {rowrecord = j; rowzero++;}
+            if (ans[j][i] == 0) {colrecord = j; colzero++;}
+            rowcounter += ans[i][j];
+            colcounter += ans[j][i];
 			if (ans[i][j] != 0)
 			{
 				tester = true;
@@ -182,6 +193,11 @@ void Sudoku::solve(){
 				if (tester == false){ soluation = 0; doo  = 1; break;}
 			}
 		}
+        if (45-rowcounter <= 9 && 45-rowcounter >=1 && rowzero == 1)
+            ans[i][rowrecord] = 45-rowcounter;
+        if (45-colcounter <= 9 && 45-colcounter >=1 && colzero == 1)
+            ans[colrecord][i] = 45-colcounter;
+        }
 
 	if (doo == 0)
 	{
